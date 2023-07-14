@@ -8,6 +8,8 @@
 
 #include "UI/FRealBandUIManager.h"
 
+#include "Importer/FRealBandAssetImporter.h"
+
 static const FName RealBandImporterTabName("RealBandImporter");
 
 #define LOCTEXT_NAMESPACE "FRealBandImporterModule"
@@ -41,6 +43,26 @@ void FRealBandImporterModule::ShutdownModule()
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
 
+	if(FRealBandUIManager::Instance.IsValid())
+	{
+		if (FRealBandUIManager::Instance->Browser != NULL && FRealBandUIManager::Instance->Browser.IsValid())
+		{
+			FRealBandUIManager::Instance->Browser = NULL;
+		}
+		if (FRealBandUIManager::Instance->DragDropWindow != NULL && FRealBandUIManager::Instance->DragDropWindow.IsValid())
+		{
+			FRealBandUIManager::Instance->DragDropWindow = NULL;
+		}
+		if (FRealBandUIManager::Instance->LocalBrowserDock != NULL && FRealBandUIManager::Instance->LocalBrowserDock.IsValid())
+		{
+			FRealBandUIManager::Instance->LocalBrowserDock = NULL;
+		}
+		FRealBandUIManager::Instance.Reset();
+	}
+
+
+	FRealBandAsstImp.Reset();
+
 	UToolMenus::UnRegisterStartupCallback(this);
 
 	UToolMenus::UnregisterOwner(this);
@@ -59,8 +81,23 @@ void FRealBandImporterModule::PluginButtonClicked()
 							FText::FromString(TEXT("RealBandImporter.cpp"))
 					   );
 	//FMessageDialog::Open(EAppMsgType::Ok, DialogText);
-
-	FRealBandUIManager::Initialize();
+	//TSharedPtr<FRealBandAssetImporter> FRealBandAsstImp = MakeShareable(new FRealBandAssetImporter);
+	bool bMainWindow = FRealBandUIManager::DisplayStartWindow();
+//	if (!FRealBandAsstImp )
+	if(!bMainWindow)
+	{
+		FRealBandAsstImp = MakeShareable(new FRealBandAssetImporter);
+		bool bInitSuccess = FRealBandAsstImp->Init();
+		if (bInitSuccess)
+		{
+			FRealBandUIManager::Initialize(FRealBandAsstImp);
+		}
+	}
+	else
+	{
+		FRealBandUIManager::DisplayStartWindow();
+	}
+	
 }
 
 void FRealBandImporterModule::RegisterMenus()

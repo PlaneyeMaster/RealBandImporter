@@ -37,13 +37,20 @@ FName FRealBandImporterStyle::GetStyleSetName()
 
 const FVector2D Icon16x16(16.0f, 16.0f);
 const FVector2D Icon20x20(20.0f, 20.0f);
+const FVector2D Icon30x30(30.0f, 30.0f);
 
 TSharedRef< FSlateStyleSet > FRealBandImporterStyle::Create()
 {
 	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("RealBandImporterStyle"));
 	Style->SetContentRoot(IPluginManager::Get().FindPlugin("RealBandImporter")->GetBaseDir() / TEXT("Resources"));
 
-	Style->Set("RealBandImporter.PluginAction", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
+	//Style->Set("RealBandImporter.PluginAction", new IMAGE_BRUSH_SVG(TEXT("PlaceholderButtonIcon"), Icon20x20));
+	Style->Set("RealBandImporter.PluginAction", new IMAGE_BRUSH_SVG(TEXT("RealBandB"), Icon20x20));
+	Style->Set("RealBandImporter.SaveAction", new IMAGE_BRUSH_SVG(TEXT("saveIcon"), Icon20x20));
+	Style->Set("RealBandImporter.SaveActionPNG", new IMAGE_BRUSH(TEXT("icons8"), Icon30x30));
+	Style->Set("RealBand.MenuLogo", new IMAGE_BRUSH_SVG(TEXT("MenuLogo"), Icon20x20));
+	
+
 	return Style;
 }
 
